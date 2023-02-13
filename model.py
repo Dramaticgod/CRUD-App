@@ -41,10 +41,41 @@ class DataModel:
         return print(tabulate(information,headers=["name","contact","confirmation","count","cost","instagram"]))
 
     @staticmethod
+    def model_delete_DB(name):
+        cursor = sqliteConnection.cursor()
+        query = """SELECT id,name FROM information """
+        cursor.execute(query)
+        result = cursor.fetchall()
+        for tuple in result:
+            if name in tuple:
+                cursor.execute("DELETE FROM information WHERE id = ?",[int(tuple[0])])
+                sqliteConnection.commit()
+                return f"{name} deleted successfully"
+            else :
+                return f"{name} not found in database"
+
+    @staticmethod
     def model_insert_DB(name,contact,instagram,confirmation,count,cost):
         cursor = sqliteConnection.cursor()
         query = """INSERT INTO information(name,contact,instagram,confirmation,count,cost) VALUES (?,?,?,?,?,?) """
         cursor.execute(query,(name,contact,instagram,confirmation,count,cost))
         sqliteConnection.commit()
-        return True
+        return f"{name} inserted successfully"
+        #add validation that its inserted successfully        
+    
 
+    @staticmethod
+    def model_show_all_DB():
+        cursor = sqliteConnection.cursor()
+        cursor.execute("SELECT COUNT(name) FROM information")
+        rows  = tuple([i+1 for i in range(int(cursor.fetchall()[0][0]))])
+        cursor.execute("""SELECT name,contact,confirmation,count,cost,instagram FROM information where id IN (%s)"""%("?," * len(rows))[:-1], rows)
+        result = cursor.fetchall()
+        return result
+
+    @staticmethod
+    def model_show_one_DB(name):
+        cursor = sqliteConnection.cursor()
+        cursor.execute("SELECT name,contact,confirmation,count,cost,instagram FROM information where name = ?",[name])
+        result = cursor.fetchall()
+        return result[0]

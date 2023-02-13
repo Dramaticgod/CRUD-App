@@ -23,8 +23,20 @@ def view_perform_command(action):
         instagram = input("Instagram : ")
         confirmation = input("Are they attending yes/no ?  :  ").lower()
         count = int(input("How many people including the person attending: "))       
-        controller.controller_insert_DB(name,contact,instagram,confirmation,count)
+        print(controller.controller_insert_DB(name,contact,instagram,confirmation,count))
+    
+    elif (action == "d"):
+        name = input("Enter a Name to delete from the database : ").lower()
+        print(controller.controller_delete_DB(name))
 
+    elif (action  == "s"):
+        action = input("Enter a name or Enter all : ").lower()
+        if (action == "all"):
+            print(controller.controller_show_all_DB())
+        else:
+            print(controller.controller_show_one_DB(action))
+        
+    
 def view_user_prompt():
     while True:
         action = view_user_command_prompt()
