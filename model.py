@@ -15,7 +15,8 @@ table =  """CREATE TABLE information (
             confirmation TEXT DEFAULT "no",
             count INTEGER DEFAULT 0,
             cost INTEGER DEFAULT 18,
-            UNIQUE (name,contact,instagram)
+            UNIQUE (contact)
+            UNIQUE (instagram)
 );"""
 #cursor.execute(table)
 
@@ -41,10 +42,37 @@ class DataModel:
         return print(tabulate(information,headers=["name","contact","confirmation","count","cost","instagram"]))
 
     @staticmethod
-    def model_delete_DB(name):
+    def check_duplicate(name):
+        cursor = sqliteConnection.cursor()
+        query = """SELECT id,name,contact,confirmation,count,cost FROM information where name = ?"""
+        cursor.execute(query,[name])
+        results = cursor.fetchall()
+        if name in results[0]:
+            table = tabulate(results, headers = ["id","name","contact","confirmation","count","cost"])
+            return True,table,results
+        else:
+            return False
+
+    @staticmethod
+    def model_delete_DB(name,id):
         cursor = sqliteConnection.cursor()
         query = """SELECT id,name FROM information """
         cursor.execute(query)
+        result = cursor.fetchall()
+        for tuple in result:
+            if name in tuple:
+                cursor.execute("DELETE FROM information WHERE id = ?",[int(tuple[0])])
+                sqliteConnection.commit()
+                return f"{name} deleted successfully"
+            else :
+                return f"{name} not found in database"
+            
+            
+    @staticmethod
+    def model_delete_using_ID_DB(name,id):
+        cursor = sqliteConnection.cursor()
+        query = """SELECT id,name FROM information where id = ?"""
+        cursor.execute(query,[id])
         result = cursor.fetchall()
         for tuple in result:
             if name in tuple:
@@ -79,3 +107,4 @@ class DataModel:
         cursor.execute("SELECT name,contact,confirmation,count,cost,instagram FROM information where name = ?",[name])
         result = cursor.fetchall()
         return result[0]
+    

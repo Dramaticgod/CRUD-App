@@ -9,11 +9,23 @@ def controller_insert_DB(name,contact,instagram,confirmation,count):
     u = DataModel.model_insert_DB(name,contact,instagram,confirmation,count,cost) 
     return u
 
+def controller_check_duplicates(name):
+    if (name == ""):
+        return f"invalid name"
+    u = DataModel.check_duplicate(name)
+    return u
+
 def controller_delete_DB(name):
     if (name == ""):
         return f"invalid name"
     u = DataModel.model_delete_DB(name)
-    return u
+    return u   
+
+def controller_delete_using_ID_DB(name,id):
+    if (name == ""):
+        return f"invalid name"
+    u = DataModel.model_delete_using_ID_DB(name,id)
+    return u 
 
 def controller_show_all_DB():
     rows = DataModel.model_show_all_DB()
