@@ -20,7 +20,12 @@ table =  """CREATE TABLE information (
 );"""
 #cursor.execute(table)
 
-class DataModel:
+
+#class initialized with a connection to the database 
+class DataModel:         
+
+
+    #constructor -> takes name as input, fetches all the related information if the name exists in database               
     def __init__(self,name):
         cursor = sqliteConnection.cursor()
         cursor.execute("SELECT id,name,contact,instagram,confirmation,count,cost FROM information where name = ?",[name])
@@ -39,13 +44,8 @@ class DataModel:
             self.information['count'] = result[5]
             self.information['cost'] = result[6]
 
-    def copy_attributes(self,dictionary):
-        self.information = dictionary
 
-    def __repr__(self):
-        output = f" ID : {self.id} \n name : {self.name} \n contact : {self.contact} \n instagram : {self.instagram} \n confirmation : {self.confirmation} \n cost : {self.cost}"
-        return output
-
+    # checks for duplicate instances , takes a name as input. Returns True if duplicates present
     @staticmethod
     def check_duplicate(name):
         cursor = sqliteConnection.cursor()
@@ -58,6 +58,8 @@ class DataModel:
         else:
             return False
 
+
+    # deletes a row from the database, takes name as input. Returns a message based on the success of deletion
     @staticmethod
     def model_delete_DB(name):
         cursor = sqliteConnection.cursor()
@@ -71,8 +73,9 @@ class DataModel:
                 return f"{name} deleted successfully"
             else :
                 return f"{name} not found in database"
-            
-            
+
+
+    # deletes a row from the database using ID. Takes name and id as input. Returns a message based on the success of deletion
     @staticmethod
     def model_delete_using_ID_DB(name,id):
         cursor = sqliteConnection.cursor()
@@ -87,6 +90,8 @@ class DataModel:
             else :
                 return f"{name} not found in database"
 
+
+    # inserts a row into the database using parameters. Takes different parameters as input. Returns a message when inserted
     @staticmethod
     def model_insert_DB(name,contact,instagram,confirmation,count,cost):
         cursor = sqliteConnection.cursor()
@@ -97,6 +102,7 @@ class DataModel:
         #add validation that its inserted successfully        
     
 
+    # accesses database and grabs all columns and rows and returns a list of tuples as output.
     @staticmethod
     def model_show_all_DB():
         cursor = sqliteConnection.cursor()
@@ -105,6 +111,8 @@ class DataModel:
         result = cursor.fetchall()
         return result
 
+
+    # grabs the row by name and outputs the full row. Returns a tuple with user information.
     @staticmethod
     def model_show_one_DB(name):
         cursor = sqliteConnection.cursor()
@@ -112,6 +120,9 @@ class DataModel:
         result = cursor.fetchall()
         return result[0]
 
+
+    # grabs class attributes (dictionary named information) and pushes the updates into the Database. 
+    # Returns an output message when updated.
     def model_update_DB(self):
         cursor = sqliteConnection.cursor()
         params = (self.information['name'],self.information['contact'],self.information['instagram'],self.information['confirmation'],int(self.information['count']),int(self.information['cost']),int(self.information['id']))
