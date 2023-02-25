@@ -21,25 +21,30 @@ table =  """CREATE TABLE information (
 #cursor.execute(table)
 
 class DataModel:
-    def __init__(self):
-        self.id = None
-        self.name = None
-        self.contact = None
-        self.instagram = None
-        self.confirmation = None
-        self.count = None
-        self.cost= None
+    def __init__(self,name):
+        cursor = sqliteConnection.cursor()
+        cursor.execute("SELECT id,name,contact,instagram,confirmation,count,cost FROM information where name = ?",[name])
+        output = cursor.fetchall()
+        self.name_exist = True
+        if(bool(output) == False):
+            self.name_exist = False
+        else: 
+            result = output[0]
+            self.information = {}
+            self.information['id'] = result[0]
+            self.information['name'] = result[1]
+            self.information['contact'] = result[2]
+            self.information['instagram'] = result[3]
+            self.information['confirmation'] = result[4]
+            self.information['count'] = result[5]
+            self.information['cost'] = result[6]
+
+    def copy_attributes(self,dictionary):
+        self.information = dictionary
 
     def __repr__(self):
-        information = []
-        information.append(self.id)
-        information.append(self.name)
-        information.append(self.contact)
-        information.append(self.instagram)
-        information.append(self.confirmation)
-        information.append(self.count)
-        information.append(self.cost)
-        return print(tabulate(information,headers=["name","contact","confirmation","count","cost","instagram"]))
+        output = f" ID : {self.id} \n name : {self.name} \n contact : {self.contact} \n instagram : {self.instagram} \n confirmation : {self.confirmation} \n cost : {self.cost}"
+        return output
 
     @staticmethod
     def check_duplicate(name):
@@ -54,7 +59,7 @@ class DataModel:
             return False
 
     @staticmethod
-    def model_delete_DB(name,id):
+    def model_delete_DB(name):
         cursor = sqliteConnection.cursor()
         query = """SELECT id,name FROM information """
         cursor.execute(query)
@@ -96,8 +101,7 @@ class DataModel:
     def model_show_all_DB():
         cursor = sqliteConnection.cursor()
         cursor.execute("SELECT COUNT(name) FROM information")
-        rows  = tuple([i+1 for i in range(int(cursor.fetchall()[0][0]))])
-        cursor.execute("""SELECT name,contact,confirmation,count,cost,instagram FROM information where id IN (%s)"""%("?," * len(rows))[:-1], rows)
+        cursor.execute("""SELECT name,contact,confirmation,count,cost,instagram FROM information""") #where id IN (%s)"""%("?," * len(rows))[:-1], rows
         result = cursor.fetchall()
         return result
 
@@ -107,4 +111,21 @@ class DataModel:
         cursor.execute("SELECT name,contact,confirmation,count,cost,instagram FROM information where name = ?",[name])
         result = cursor.fetchall()
         return result[0]
-    
+
+    def model_update_DB(self):
+        cursor = sqliteConnection.cursor()
+        params = (self.information['name'],self.information['contact'],self.information['instagram'],self.information['confirmation'],int(self.information['count']),int(self.information['cost']),int(self.information['id']))
+        query = f"""UPDATE information 
+                    SET name = ?,
+                        contact= ?,
+                        instagram = ?,
+                        confirmation = ?,
+                        count = ?,
+                        cost = ?
+                    WHERE id = ?;
+                    """
+        cursor.execute(query,params)
+        sqliteConnection.commit()
+        return "updated" 
+
+

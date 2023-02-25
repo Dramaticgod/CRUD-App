@@ -37,3 +37,16 @@ def controller_show_one_DB(name):
     if name in row:
         temp.append(row)
     return (tabulate(temp,headers = ["name","contact","confirmation","count","cost","instagram"]))
+
+def controller_dictionary_by_name(name):
+    person = DataModel(name)
+    if person.name_exist == False:
+        return None
+    else:
+        data = person.information
+        return data
+
+def controller_update_DB(dictionary):
+    person = DataModel(dictionary['name'])
+    person.information = dictionary
+    return person.model_update_DB()
