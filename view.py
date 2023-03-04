@@ -49,9 +49,11 @@ def view_delete_command():
 #If user (all) calls controller_shows_all_DB and prints the table.
 #If user (name) calls controller_show_one_DB and prints the table.
 def view_show_command():
-        action = input("Enter a name or Enter all : ").lower()
+        action = input("Enter name/all/cost : ").lower()
         if (action == "all"):
             print(controller.controller_show_all_DB())
+        elif (action == "cost"):
+            print(f"Total cost for Event : {controller.controller_show_cost()}")
         else:
             print(controller.controller_show_one_DB(action))
         #TODo : show duplicates if exists for this

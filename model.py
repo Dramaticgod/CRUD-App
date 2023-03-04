@@ -139,4 +139,17 @@ class DataModel:
         sqliteConnection.commit()
         return "updated" 
 
+    @staticmethod
+    def model_show_total_cost():
+        cursor = sqliteConnection.cursor()
+        query = """SELECT cost FROM information;"""
+        cursor.execute(query)
+        results = cursor.fetchall()
+        cost = []
+        for integer in results:
+            cost.append(integer[0])
+        total_cost = sum(cost)
+        return total_cost
+
+
 

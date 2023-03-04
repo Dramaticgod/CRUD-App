@@ -69,3 +69,8 @@ def controller_update_DB(dictionary):
     person = DataModel(dictionary['name'])
     person.information = dictionary
     return person.model_update_DB()
+
+
+def controller_show_cost():
+    results = DataModel.model_show_total_cost()
+    return results
